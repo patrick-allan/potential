@@ -23,32 +23,26 @@ class DevelopersController extends Controller
                 'hobby'          => 'max:200',
                 'datanascimento' => 'date',
                 'idade'          => 'integer|min:1'
-            ]);          
+            ]);
             $conditions = [];
             if (isset($validated['id'])) {
                 array_push($conditions, ['id', $validated['id']]);
             }
-
             if (isset($validated['nome'])) {
-                array_push($conditions, ['nome','like','%'.$validated['nome'].'%']);
+                array_push($conditions, ['nome', 'like', '%' . $validated['nome'] . '%']);
             }
-
             if (isset($validated['sexo'])) {
                 array_push($conditions, ['sexo', $validated['sexo']]);
             }
-
             if (isset($validated['hobby'])) {
-                array_push($conditions, ['hobby','like','%'.$validated['hobby'].'%']);
+                array_push($conditions, ['hobby', 'like', '%' . $validated['hobby'] . '%']);
             }
-
             if (isset($validated['datanascimento'])) {
                 array_push($conditions, ['datanascimento', $validated['datanascimento']]);
             }
-
             if (isset($validated['idade'])) {
                 array_push($conditions, ['idade', $validated['idade']]);
-            }            
-            //dd($conditions);
+            }
             $result = Developers::where($conditions)->paginate(2);
             return $result;
         }
