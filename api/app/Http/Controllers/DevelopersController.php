@@ -22,7 +22,8 @@ class DevelopersController extends Controller
                 'sexo'           => 'string|max:1|in:F,M',
                 'hobby'          => 'max:200',
                 'datanascimento' => 'date',
-                'idade'          => 'integer|min:1'
+                'idade'          => 'integer|min:1',
+                'pageLimit'      => 'integer|min:1|max:30',
             ]);
             $conditions = [];
             if (isset($validated['id'])) {
@@ -43,7 +44,12 @@ class DevelopersController extends Controller
             if (isset($validated['idade'])) {
                 array_push($conditions, ['idade', $validated['idade']]);
             }
-            $result = Developers::where($conditions)->paginate(2);
+            $pageLimit = 5;
+            if (isset($validated['pageLimit'])) {
+                $pageLimit = $validated['pageLimit']; 
+            }
+
+            $result = Developers::where($conditions)->paginate($pageLimit);
             return $result;
         }
     }
