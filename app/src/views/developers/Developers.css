@@ -2,3 +2,8 @@
     min-width: 120px;
     border: 1px solid #ced4da;
 }
+
+.table-crud-options{    
+    width: 150px;
+    text-align: center;
+}
