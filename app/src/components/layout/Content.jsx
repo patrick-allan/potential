@@ -23,6 +23,6 @@ const Content = props => (
             </Route>
         </Switch>
     </main>
-)
+);
 
-export default Content
+export default Content;

@@ -1,6 +1,7 @@
-.Content {
-    display: flex;
-    flex: 1;
-    background-color: #ddd;
-    padding: 30px;
+main{
+    padding: 0.5rem;
+}
+
+.card {
+    width: 1200px;    
 }
