@@ -1,6 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { InputGroup, FormControl, Button } from 'react-bootstrap';
 import './Developers.css';
 
 const Developers = props => (
@@ -8,15 +9,24 @@ const Developers = props => (
         <div className="card">
             <div className="card-header">
                 <h2>Developers <button className="btn btn-success"><FontAwesomeIcon icon={faPlus} /> Novo</button></h2>
-                <div className="input-group">
-                    <label className="input-group-text" htmlFor="inputGroupSelect01">Filtro</label>
-                    <select className="form-select filter">
-                        <option value="nome" defaultValue>Nome</option>
-                        <option value="idade">Idade</option>
-                    </select>
-                    <input className="form-control" type="text" />
-                    <button className="btn btn-primary" type="button"><FontAwesomeIcon icon={faSearch} /> Buscar</button>
-                </div>
+
+                <InputGroup className="mb-3">
+                    <InputGroup.Prepend>
+                        <InputGroup.Text id="basic-addon1">Filtro</InputGroup.Text>
+                        <select className="form-select filter">
+                            <option value="nome" defaultValue>Nome</option>
+                            <option value="idade">Idade</option>
+                        </select>
+                    </InputGroup.Prepend>
+                    <FormControl
+                        placeholder="Username"
+                        aria-label="Username"
+                        aria-describedby="basic-addon1"
+                    />
+                    <InputGroup.Append>
+                        <Button><FontAwesomeIcon icon={faSearch} /> Buscar</Button>
+                    </InputGroup.Append>
+                </InputGroup>
             </div>
             <div className="card-body">
                 <table className="table table-hover">
@@ -25,7 +35,7 @@ const Developers = props => (
                             <th scope="col">#</th>
                             <th scope="col">Nome</th>
                             <th scope="col">Sexo</th>
-                            <th scope="col">Idade</th>                            
+                            <th scope="col">Idade</th>
                             <th scope="col">Opções</th>
                         </tr>
                     </thead>
