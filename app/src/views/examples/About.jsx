@@ -1,9 +1,15 @@
 import React from 'react'
 
 const About = props => (
-    <div className="About">
-        <h1>Sobre</h1>
-        <p>O nosso sistema foi criado...</p>
+    <div className="d-flex justify-content-center">    
+        <div className="card">
+            <div className="card-header">
+                <h2>Sobre</h2>
+            </div>
+            <div className="card-body">
+                <p>informações sobre o sistema.</p>
+            </div>
+        </div>
     </div>
 )
 

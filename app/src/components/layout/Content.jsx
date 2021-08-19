@@ -6,8 +6,8 @@ import Developers from '../../views/developers/Developers';
 import NotFound from '../../views/examples/NotFound';
 import './Content.css';
 
-const Content = props => (
-    <main className="Content">
+const Content = () => (
+    <main>
         <Switch>
             <Route path="/about">
                 <About />
@@ -17,7 +17,7 @@ const Content = props => (
             </Route>
             <Route exact path="/">
                 <Home />
-            </Route>            
+            </Route>
             <Route path="*">
                 <NotFound />
             </Route>

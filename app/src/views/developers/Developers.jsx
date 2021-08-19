@@ -9,9 +9,9 @@ const Developers = props => (
             <div className="card-header">
                 <h2>Developers <button className="btn btn-success"><FontAwesomeIcon icon={faPlus} /> Novo</button></h2>
                 <div className="input-group">
-                    <label class="input-group-text" for="inputGroupSelect01">Filtro</label>
+                    <label className="input-group-text" htmlFor="inputGroupSelect01">Filtro</label>
                     <select className="form-select filter">
-                        <option value="nome" selected>Nome</option>
+                        <option value="nome" defaultValue>Nome</option>
                         <option value="idade">Idade</option>
                     </select>
                     <input className="form-control" type="text" />

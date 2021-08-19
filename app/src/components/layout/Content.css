@@ -2,6 +2,6 @@ main{
     padding: 0.5rem;
 }
 
-.card {
-    width: 1200px;    
+main .card{
+    width: 1200px;
 }
