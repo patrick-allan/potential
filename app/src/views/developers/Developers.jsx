@@ -5,6 +5,7 @@ import { InputGroup, FormControl, Button } from 'react-bootstrap';
 
 import { useFetch } from '../../hooks/useFetch';
 import CrudOptions from '../../components/utils/CrudOptions';
+import DevelopersService from '../../services/developers';
 
 import './Developers.css';
 
@@ -26,6 +27,8 @@ const Developers = (props) => {
         
     const [urlParams, setUrlParams] = useState(''); 
     const response = useFetch(urlParams);
+
+    const [info, setInfo] = useState('');
     
     useEffect(function () {
         if (textFilter){
@@ -83,19 +86,7 @@ const Developers = (props) => {
     const handleChange = (e) => {
         setFilter(e.target.value);        
     };
-    
-    async function infoDeveloper(id){
-        console.log('infoDeveloper: ' + id);
-    }
-
-    async function editDeveloper(id){
-        console.log('editDeveloper: ' + id);
-    }
-
-    async function deleteDeveloper(id){
-        console.log('deleteDeveloper: ' + id);
-    }
-
+       
     const crudOperation = useCallback(function (operation, id){        
         switch (operation){
             case 'info' : infoDeveloper(id); break;
@@ -104,6 +95,24 @@ const Developers = (props) => {
             default     : setError(true);
         }
     }, []);
+
+    
+    async function infoDeveloper(id){
+        const dataDev = await DevelopersService.info(id);        
+        if (dataDev.status === 200){            
+            setInfo(dataDev.data);
+        }else{
+            alert('Não foi possível buscar as informações detalhadas.');
+        }     
+    }
+
+    async function editDeveloper(id){
+        console.log('editDeveloper: ' + id);
+    }
+
+    async function deleteDeveloper(id){        
+        await DevelopersService.delete(id);        
+    }
 
     return (
         <div className="d-flex justify-content-center">
