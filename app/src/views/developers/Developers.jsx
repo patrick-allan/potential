@@ -8,30 +8,45 @@ import CrudOptions from '../../components/utils/CrudOptions';
 
 import './Developers.css';
 
+const url = 'http://localhost:8000/developers?';
+
 const Developers = (props) => {
     const [error, setError] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageLimit, setPageLimit] = useState(2);
     const [firstPage, setFirstPage] = useState(true);
     const [lastPage, setLastPage] = useState(false);
-
-    const [filter, setFilter] = useState('');
+    const [filter, setFilter] = useState('nome');
     const [textFilter, setTextFilter] = useState('');
 
-    const url = 'http://localhost:8000/developers?';
-    const response = useFetch(url + `pageLimit=${pageLimit}` + `&page=${currentPage}`);
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            console.log('submit');
-            //const user = await UsersService.login({ email: email, password: password });
-            //setRedirectToDash(true);
-        } catch (error) {
+    //const url = 'http://localhost:8000/developers?';
+    //const response = useFetch(url + `pageLimit=${pageLimit}&page=${currentPage}`);    
+    //const url = `http://localhost:8000/developers?pageLimit=${pageLimit}&page=${currentPage}&${filter}=${textFilter}`;
+        
+    const [urlParams, setUrlParams] = useState(''); 
+    const response = useFetch(urlParams);
+    
+    useEffect(function () {
+        if (textFilter){
+            setUrlParams(url+`pageLimit=${pageLimit}&page=${currentPage}&${filter}=${textFilter}`);
+        }else{
+            setUrlParams(url+`pageLimit=${pageLimit}&page=${currentPage}`);
+        }        
+    }, [currentPage]);  
+          
+    const handleSubmit = async (e) => {        
+        e.preventDefault();        
+        try {                        
+            if (textFilter){
+                setUrlParams(url+`pageLimit=${pageLimit}&${filter}=${textFilter}`);
+            }else{
+                setUrlParams(url+`pageLimit=${pageLimit}`);
+            }            
+        } catch (error) {            
             setError(true);
-        }
-    }
-
+        }               
+    }    
+        
     function showStates(states) {
         return states.map(state =>
             <tr key={state.id}>
@@ -42,8 +57,8 @@ const Developers = (props) => {
                 <td className="table-crud-options"><CrudOptions /></td>
             </tr>
         );
-    };
-
+    };  
+    
     useEffect(function () {
         if (!response.loading) {
             setCurrentPage(response.data.current_page);
@@ -61,7 +76,7 @@ const Developers = (props) => {
             }
         }
     }, [response]);
-   
+       
     const handleChange = (e) => {
         setFilter(e.target.value);        
     };
@@ -105,7 +120,7 @@ const Developers = (props) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {!response.loading ? showStates(response.data.data) : false}
+                            {!response.loading ? showStates(response.data.data?response.data.data:response.data) : false}
                         </tbody>
                     </table>
                 </div>

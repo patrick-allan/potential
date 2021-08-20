@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 use App\Models\Developers;
 
@@ -48,7 +47,6 @@ class DevelopersController extends Controller
             if (isset($validated['pageLimit'])) {
                 $pageLimit = $validated['pageLimit']; 
             }
-
             $result = Developers::where($conditions)->paginate($pageLimit);
             return $result;
         }
