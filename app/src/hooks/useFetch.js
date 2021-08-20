@@ -7,12 +7,14 @@ export const useFetch = (url, method = 'get') => {
     });
 
     useEffect(function() {
-        fetch(url, { method })
-            .then(resp => resp.json())
-            .then(json => setResponse({
-                data: json,
-                loading: false
-            }))
+        if (url){
+            fetch(url, { method })
+                .then(resp => resp.json())
+                .then(json => setResponse({
+                    data: json,
+                    loading: false
+                }))
+        }
 
     }, [url, method]);
 

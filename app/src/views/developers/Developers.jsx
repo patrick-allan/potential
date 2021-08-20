@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faSearch, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { InputGroup, FormControl, Button } from 'react-bootstrap';
@@ -13,7 +13,8 @@ const url = 'http://localhost:8000/developers?';
 const Developers = (props) => {
     const [error, setError] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageLimit, setPageLimit] = useState(2);
+    //const [pageLimit, setPageLimit] = useState(2);
+    const pageLimit = 2;
     const [firstPage, setFirstPage] = useState(true);
     const [lastPage, setLastPage] = useState(false);
     const [filter, setFilter] = useState('nome');
@@ -54,7 +55,9 @@ const Developers = (props) => {
                 <td>{state.nome}</td>
                 <td className="text-center">{state.sexo}</td>
                 <td className="text-center">{state.idade}</td>
-                <td className="table-crud-options"><CrudOptions /></td>
+                <td className="table-crud-options">
+                    <CrudOptions registerName="desenvolvedor" registerId={state.id} crudOperation={crudOperation}/>                    
+                </td>
             </tr>
         );
     };  
@@ -80,6 +83,27 @@ const Developers = (props) => {
     const handleChange = (e) => {
         setFilter(e.target.value);        
     };
+    
+    async function infoDeveloper(id){
+        console.log('infoDeveloper: ' + id);
+    }
+
+    async function editDeveloper(id){
+        console.log('editDeveloper: ' + id);
+    }
+
+    async function deleteDeveloper(id){
+        console.log('deleteDeveloper: ' + id);
+    }
+
+    const crudOperation = useCallback(function (operation, id){        
+        switch (operation){
+            case 'info' : infoDeveloper(id); break;
+            case 'edit' : editDeveloper(id); break;
+            case 'del'  : deleteDeveloper(id); break;
+            default     : setError(true);
+        }
+    }, []);
 
     return (
         <div className="d-flex justify-content-center">
@@ -125,10 +149,12 @@ const Developers = (props) => {
                     </table>
                 </div>
                 <div className="card-footer text-center">
-                    <Button id="previus-page" disabled={firstPage} variant="outline-primary" onClick={() => setCurrentPage(currentPage - 1)}><FontAwesomeIcon icon={faArrowLeft} /> Anterior</Button>{' '}
-                    <Button id="next-page" disabled={lastPage} variant="outline-primary" onClick={() => setCurrentPage(currentPage + 1)}>Próximo <FontAwesomeIcon icon={faArrowRight} /></Button>
+                    <Button id="previus-page" disabled={firstPage} variant="outline-primary" 
+                        onClick={() => setCurrentPage(currentPage - 1)}><FontAwesomeIcon icon={faArrowLeft} /> Anterior</Button>{' '}
+                    <Button id="next-page" disabled={lastPage} variant="outline-primary" 
+                        onClick={() => setCurrentPage(currentPage + 1)}>Próximo <FontAwesomeIcon icon={faArrowRight} /></Button>
                 </div>
-            </div>
+            </div>            
         </div>
     );
 };
