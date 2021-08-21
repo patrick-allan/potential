@@ -11,6 +11,10 @@ import './Developers.css';
 const url = 'http://localhost:8000/developers?';
 
 const Developers = (props) => {
+    const [nome, setNome] = useState('');
+    const [sexo, setSexo] = useState('N');
+    const [hobby, setHobby] = useState('');
+    const [datanascimento, setDatanascimento] = useState('');
     const [error, setError] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     //const [pageLimit, setPageLimit] = useState(2);
@@ -110,6 +114,37 @@ const Developers = (props) => {
         await DevelopersService.delete(id);
     }
 
+    /*Funções Modal Crud*/
+    function cleanModalDev() {
+        setNome('');
+        setSexo('');
+        setHobby('');
+        setDatanascimento('');
+    }
+
+    function cancelModalDev() {
+        setShow(false);
+        cleanModalDev();
+    };
+
+    function saveModalDev() {
+        setShow(false);
+        submitModalDev();        
+    }
+
+    const submitModalDev = async (e) => {
+        e.preventDefault();
+        try {
+            const developer = await DevelopersService.include(
+                { nome: nome, sexo: sexo, hobby: hobby, datanascimento: datanascimento}
+            );            
+            console.log(developer);
+            cleanModalDev();
+        } catch (error) {
+            setError(true);
+        }
+    }
+
     return (
         <div className="d-flex justify-content-center">
             <div className="card">
@@ -119,7 +154,8 @@ const Developers = (props) => {
                         <InputGroup className="mb-3">
                             <InputGroup.Prepend>
                                 <InputGroup.Text id="basic-addon1">Filtro</InputGroup.Text>
-                                <select className="form-select filter" defaultValue={filter} onChange={handleChange}>
+                                <select className="form-select filter"
+                                    defaultValue={filter} onChange={handleChange}>
                                     <option value="nome">Nome</option>
                                     <option value="idade">Idade</option>
                                 </select>
@@ -168,22 +204,27 @@ const Developers = (props) => {
                 <Modal.Header closeButton>
                     <Modal.Title>Developers</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
-                    <Form className="form-developer">
+                <Form onSubmit={submitModalDev} className="form-developer">
+                <Modal.Body>                    
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>Nome</Form.Label>
-                            <Form.Control type="text" />
+                            <Form.Control type="text"
+                                value={nome} onChange={e => setNome(e.target.value)} />
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-                            <Form.Label>Sexo</Form.Label>                            
+                            <Form.Label>Sexo</Form.Label>
                             {['radio'].map((type) => (
-                                <div key={`inline-${type}`} className="genero mb-3">
+                                <div key={`inline-${type}`} className="genero mb-3"
+                                    /* onChange={setGender.bind(this)} */
+                                    onChange={e => setSexo(e.target.value)}
+                                >
                                     <Form.Check
                                         inline
                                         label="Masculino"
                                         name="group1"
                                         type={type}
                                         id={`inline-${type}-1`}
+                                        value="M"
                                     />
                                     <Form.Check
                                         inline
@@ -191,31 +232,37 @@ const Developers = (props) => {
                                         name="group1"
                                         type={type}
                                         id={`inline-${type}-2`}
+                                        value="F"
                                     />
                                     <Form.Check
-                                        inline                                        
+                                        inline
                                         label="Não Binário"
                                         name="group1"
                                         type={type}
                                         id={`inline-${type}-3`}
+                                        value="N"
                                     />
                                 </div>
                             ))}
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                             <Form.Label>Hobby</Form.Label>
-                            <Form.Control as="textarea" rows={3} />
+                            <Form.Control as="textarea" rows={3}
+                                value={hobby} onChange={e => setHobby(e.target.value)}
+                            />
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                             <Form.Label>Data de Nascimento</Form.Label>
-                            <Form.Control type="date" />
-                        </Form.Group>
-                    </Form>
+                            <Form.Control type="date"
+                                value={datanascimento} onChange={e => setDatanascimento(e.target.value)}
+                            />
+                        </Form.Group>                    
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="danger" onClick={handleClose}><FontAwesomeIcon icon={faTimes} /> Cancelar</Button>
-                    <Button variant="success"><FontAwesomeIcon icon={faSave} /> Salvar</Button>
+                    <Button variant="danger" onClick={cancelModalDev}><FontAwesomeIcon icon={faTimes} /> Cancelar</Button>
+                    <Button variant="success" type="submit"><FontAwesomeIcon icon={faSave} /> Salvar</Button>
                 </Modal.Footer>
+                </Form>
             </Modal>
         </div>
     );
