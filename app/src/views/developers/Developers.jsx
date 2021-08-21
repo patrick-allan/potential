@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faSearch, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { InputGroup, FormControl, Button } from 'react-bootstrap';
-
 import { useFetch } from '../../hooks/useFetch';
 import CrudOptions from '../../components/utils/CrudOptions';
 import DevelopersService from '../../services/developers';
@@ -29,6 +28,7 @@ const Developers = (props) => {
     const response = useFetch(urlParams);
 
     const [info, setInfo] = useState('');
+    const [infoKey, setInfoKey] = useState('');
     
     useEffect(function () {
         if (textFilter){
@@ -59,7 +59,12 @@ const Developers = (props) => {
                 <td className="text-center">{state.sexo}</td>
                 <td className="text-center">{state.idade}</td>
                 <td className="table-crud-options">
-                    <CrudOptions registerName="desenvolvedor" registerId={state.id} crudOperation={crudOperation}/>                    
+                    <CrudOptions
+                        registerName='desenvolvedor'
+                        registerId={state.id}
+                        crudOperation={crudOperation}
+                        resource='developers'
+                    />
                 </td>
             </tr>
         );
@@ -88,6 +93,7 @@ const Developers = (props) => {
     };
        
     const crudOperation = useCallback(function (operation, id){        
+        console.log('crudOperation');
         switch (operation){
             case 'info' : infoDeveloper(id); break;
             case 'edit' : editDeveloper(id); break;
@@ -98,13 +104,23 @@ const Developers = (props) => {
 
     
     async function infoDeveloper(id){
+        console.log('infoDeveloper');
         const dataDev = await DevelopersService.info(id);        
         if (dataDev.status === 200){            
-            setInfo(dataDev.data);
+            setInfo('retornoAxios');
+            setInfo(Object.values(dataDev.data));
+            setInfoKey(Object.keys(dataDev.data));
         }else{
             alert('Não foi possível buscar as informações detalhadas.');
         }     
     }
+
+    /*useEffect(function () {
+        if (info){
+            console.log(info);
+        }        
+    }, [info]);
+    */
 
     async function editDeveloper(id){
         console.log('editDeveloper: ' + id);
