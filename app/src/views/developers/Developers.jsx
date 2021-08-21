@@ -147,6 +147,13 @@ const Developers = (props) => {
         setUrlParams(urlParams);
     }
 
+    /* Alerts auto dimiss*/
+    useEffect(function () {
+        window.setTimeout(()=>{
+            setAlert(alertInitialState);
+        }, 5000)
+    }, [alert]);
+
     /*[INICIO] modal handling*/
     function cleanModalDev() {
         setNome('');
@@ -171,14 +178,20 @@ const Developers = (props) => {
                 setShow(false);                
                 setAlert({visible: true, message: developer.message, variant: 'success'});
                 setUrlParams(urlParams);
-            } else {
-                setAlertModal({visible: true, message: developer.message, variant: 'danger'});
+            } else {                
+                setAlertModal({visible: true, message: manipulaErro(developer.message), variant: 'danger'});
             }
         } catch (error) {            
             setAlert({visible: true, message: 'Não foi possivel executar a operação solicitada', variant: 'danger'});
         }
     }
     /*[FIM] modal handling*/
+
+    function manipulaErro(erros){
+        return erros.map(state =>                
+            <li key={state}>{state}</li>                
+        );       
+    }
 
     return (
         <div className="d-flex justify-content-center">
