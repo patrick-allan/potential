@@ -7,3 +7,13 @@
     width: 150px;
     text-align: center;
 }
+
+.form-label{
+    font-weight: bold;
+}
+
+.genero{
+    text-align: center;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;     
+}

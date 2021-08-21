@@ -18,7 +18,7 @@ class DevelopersController extends Controller
         } else {
             $validated = $this->validate($request, [
                 'nome'           => 'string|max:200|regex:/^[a-zA-Z\s]*$/',
-                'sexo'           => 'string|max:1|in:F,M',
+                'sexo'           => 'string|max:1|in:F,M,N',
                 'hobby'          => 'max:200',
                 'datanascimento' => 'date',
                 'idade'          => 'integer|min:1',
@@ -56,7 +56,7 @@ class DevelopersController extends Controller
     {
         $validated = $this->validate($request, [
             'nome'           => 'required|string|max:200|regex:/^[a-zA-Z\s]*$/',
-            'sexo'           => 'required|string|max:1|in:F,M',
+            'sexo'           => 'required|string|max:1|in:F,M,N',
             'hobby'          => 'nullable|max:200',
             'datanascimento' => 'required|date',
         ]);
@@ -73,7 +73,7 @@ class DevelopersController extends Controller
     {
         $validated = $this->validate($request, [
             'nome'           => 'string|max:200|regex:/^[a-zA-Z\s]*$/',
-            'sexo'           => 'string|max:1|in:F,M',
+            'sexo'           => 'string|max:1|in:F,M,N',
             'hobby'          => 'nullable|max:200',
             'datanascimento' => 'date',
         ]);
