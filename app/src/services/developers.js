@@ -6,7 +6,9 @@ const DevelopersService = {
         return response;
     },
     include: async (params) => {
+        console.log(params);
         const response = await Api.post('/developers', params);
+        console.log(response);
         return response;        
     }, 
     delete: async (id) => {

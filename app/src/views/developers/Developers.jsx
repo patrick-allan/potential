@@ -124,8 +124,7 @@ const Developers = (props) => {
     async function deleteDeveloper(id) {
         await DevelopersService.delete(id);
     }
-
-    /*Funções Modal Crud*/
+    
     function cleanModalDev() {
         setNome('');
         setSexo('');
@@ -148,6 +147,7 @@ const Developers = (props) => {
             cleanModalDev();
             setShow(false);
         } catch (error) {
+            console.log(error);
             setError(true);
         }
     }
