@@ -13,44 +13,49 @@ const CrudOptions = (props) => {
     const [modalDelete, setModalDelete] = useState(false);
     const handleCloseDelete = () => setModalDelete(false);
     const handleShowDelete = () => setModalDelete(true);
-
-    //const [infoLoaded, setInfoLoaded] = useState('');
+    
     const [modalInfo, setModalInfo] = useState(false);
-    const handleCloseInfo = () => setModalInfo(false);
-    //const handleShowInfo = () => setModalInfo(true);
+    const handleCloseInfo = () => setModalInfo(false);    
 
-    const [info, setInfo] = useState('');
-    const [infoKey, setInfoKey] = useState('');
+    const [info, setInfo] = useState('');    
 
     function confirmDelete() {
         setModalDelete(false);
         props.crudOperation('del', props.registerId);
-    }
+    };
 
-    function ShowInfo(informacoes){
-        console.log('ShowInfo', informacoes);
-        return ';';
-    }
+    function ShowInfo(informacoes){     
+        return informacoes.map(state =>
+            <tr key={state.key}>
+                <td>{state.key}</td>
+                <td>{state.value}</td>
+            </tr>
+        );
+    };
 
     const loadInfo = async (e) => {                
         try {
             const apiData = await CrudService.info(props.resource, props.registerId);
             if (apiData.status === 200){
-                let arr = [];
+                let myArray = [];
                 for (var [key, value] of Object.entries(apiData.data)) {
-                    arr[key] = value;                    
+                    myArray.push({key, value});
                 }
-                console.log('obj: ', apiData.data);
-                console.log('arr: ', arr);
-                setInfo(arr);
+                setInfo(myArray);
                 setModalInfo(true);
             }else{
-                alert('Não foi possível consultar as informações.');                
-            }            
+                alert('Não foi possível consultar as informações.');
+            }
         } catch (error) {
             setError(error);
         }
-    }   
+    };
+
+    useEffect(function () {
+        if (error){
+            alert(error);
+        }        
+    }, [error]);
 
     return (
         <div className="crud-options">
@@ -93,7 +98,17 @@ const CrudOptions = (props) => {
                     <Modal.Title>Informações Detalhadas</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {info.id ? ShowInfo(info) : ''}
+                    <table className="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Identificador</th>
+                                <th>Descrição</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {info ? ShowInfo(info): false}
+                        </tbody>
+                    </table>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseInfo}>

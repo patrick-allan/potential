@@ -26,10 +26,7 @@ const Developers = (props) => {
         
     const [urlParams, setUrlParams] = useState(''); 
     const response = useFetch(urlParams);
-
-    const [info, setInfo] = useState('');
-    const [infoKey, setInfoKey] = useState('');
-    
+      
     useEffect(function () {
         if (textFilter){
             setUrlParams(url+`pageLimit=${pageLimit}&page=${currentPage}&${filter}=${textFilter}`);
@@ -94,33 +91,12 @@ const Developers = (props) => {
        
     const crudOperation = useCallback(function (operation, id){        
         console.log('crudOperation');
-        switch (operation){
-            case 'info' : infoDeveloper(id); break;
+        switch (operation){            
             case 'edit' : editDeveloper(id); break;
             case 'del'  : deleteDeveloper(id); break;
             default     : setError(true);
         }
     }, []);
-
-    
-    async function infoDeveloper(id){
-        console.log('infoDeveloper');
-        const dataDev = await DevelopersService.info(id);        
-        if (dataDev.status === 200){            
-            setInfo('retornoAxios');
-            setInfo(Object.values(dataDev.data));
-            setInfoKey(Object.keys(dataDev.data));
-        }else{
-            alert('Não foi possível buscar as informações detalhadas.');
-        }     
-    }
-
-    /*useEffect(function () {
-        if (info){
-            console.log(info);
-        }        
-    }, [info]);
-    */
 
     async function editDeveloper(id){
         console.log('editDeveloper: ' + id);
