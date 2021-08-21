@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faSearch, faArrowLeft, faArrowRight, faTimes, faSave } from '@fortawesome/free-solid-svg-icons';
-import { InputGroup, FormControl, Button, Modal, Form } from 'react-bootstrap';
-import { useFetch } from '../../hooks/useFetch';
+import { InputGroup, FormControl, Button, Modal, Form, Alert } from 'react-bootstrap';
 import CrudOptions from '../../components/utils/CrudOptions';
 import DevelopersService from '../../services/developers';
 
@@ -10,42 +9,56 @@ import './Developers.css';
 
 const url = 'http://localhost:8000/developers?';
 
+const alertInitialState = {
+    visible: false,
+    message: '',
+    variant: '',
+};
+
+const responseInitialState = {
+    loading: true, 
+    data: '',
+}
+
 const Developers = (props) => {
+    /*propiedades do developer*/
     const [nome, setNome] = useState('');
     const [sexo, setSexo] = useState('N');
     const [hobby, setHobby] = useState('');
     const [datanascimento, setDatanascimento] = useState('');
-    const [error, setError] = useState(false);
+    
+    /*alerts*/
+    const [alert, setAlert] = useState(alertInitialState);
+    const [alertModal, setAlertModal] = useState(alertInitialState);
+   
+    /*paginação e pesquisa*/
     const [currentPage, setCurrentPage] = useState(1);
     //const [pageLimit, setPageLimit] = useState(2);
-    const pageLimit = 5;
+    const pageLimit = 2;
     const [firstPage, setFirstPage] = useState(true);
     const [lastPage, setLastPage] = useState(false);
     const [filter, setFilter] = useState('nome');
-    const [textFilter, setTextFilter] = useState('');
+    const [textFilter, setTextFilter] = useState('');  
+    const [urlParams, setUrlParams] = useState('');    
+    const [response, setResponse] = useState(responseInitialState);
 
-    //const url = 'http://localhost:8000/developers?';
-    //const response = useFetch(url + `pageLimit=${pageLimit}&page=${currentPage}`);    
-    //const url = `http://localhost:8000/developers?pageLimit=${pageLimit}&page=${currentPage}&${filter}=${textFilter}`;
-
-    const [urlParams, setUrlParams] = useState('');
-    //const response = useFetch(urlParams);
-    const [response, setResponse] = useState({loading:true, data:''});    
-
+    /*modal handling*/
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-    
+
+    /*realiza a pesquisa de developers*/
     useEffect(() => {
-        if (urlParams){
+        if (urlParams) {
             const fetchData = async () => {
-                const data = await await DevelopersService.getFiltered(urlParams);           
-                setResponse({loading: false, data: data.data});
-             }      
-             fetchData();
-        }        
+                const data = await await DevelopersService.getFiltered(urlParams);
+                setResponse({ loading: false, data: data.data });
+            }
+            fetchData();
+        }
     }, [urlParams]);
 
+    /*paginação*/
     useEffect(function () {
         if (textFilter) {
             setUrlParams(url + `pageLimit=${pageLimit}&page=${currentPage}&${filter}=${textFilter}`);
@@ -54,6 +67,7 @@ const Developers = (props) => {
         }
     }, [currentPage]);
 
+    /*manipula os filtros conforme necessário*/
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -63,11 +77,12 @@ const Developers = (props) => {
                 setUrlParams(url + `pageLimit=${pageLimit}`);
             }
         } catch (error) {
-            setError(true);
+            setAlert({visible: true, message: 'Dados incorretos.', variant: 'danger'});            
         }
     }
 
-    function showStates(states) {                 
+    /*retorna as linhas da tabela*/
+    function showStates(states) {
         return states.map(state =>
             <tr key={state.id}>
                 <th>{state.id}</th>
@@ -86,6 +101,7 @@ const Developers = (props) => {
         );
     };
 
+    /*seta a paginação para manipular o estado dos botões*/
     useEffect(function () {
         if (!response.loading) {
             setCurrentPage(response.data.current_page);
@@ -113,7 +129,7 @@ const Developers = (props) => {
         switch (operation) {
             case 'edit': editDeveloper(id); break;
             case 'del': deleteDeveloper(id); break;
-            default: setError(true);
+            default: setAlert({visible: true, message: 'Operação inválida', variant: 'danger'});
         }
     }, []);
 
@@ -123,8 +139,15 @@ const Developers = (props) => {
 
     async function deleteDeveloper(id) {
         await DevelopersService.delete(id);
+        setAlert({
+            visible: true, 
+            message: 'Developers excluido com sucesso.',
+            variant: 'success',
+        });
+        setUrlParams(urlParams);
     }
-    
+
+    /*[INICIO] modal handling*/
     function cleanModalDev() {
         setNome('');
         setSexo('');
@@ -141,16 +164,21 @@ const Developers = (props) => {
         e.preventDefault();
         try {
             const developer = await DevelopersService.include(
-                {nome, sexo, hobby, datanascimento}
-            );
-            console.log('dev response', developer);
-            cleanModalDev();
-            setShow(false);
-        } catch (error) {
-            console.log(error);
-            setError(true);
+                { nome, sexo, hobby, datanascimento }
+            );            
+            if (developer.type === 'success') {
+                cleanModalDev();
+                setShow(false);                
+                setAlert({visible: true, message: developer.message, variant: 'success'});
+                setUrlParams(urlParams);
+            } else {
+                setAlertModal({visible: true, message: developer.message, variant: 'danger'});
+            }
+        } catch (error) {            
+            setAlert({visible: true, message: 'Não foi possivel executar a operação solicitada', variant: 'danger'});
         }
     }
+    /*[FIM] modal handling*/
 
     return (
         <div className="d-flex justify-content-center">
@@ -179,7 +207,12 @@ const Developers = (props) => {
                 </div>
                 <div className="card-body">
                     <div className="mb-1">
-                        {error && <div className="alert alert-danger" role="alert">Dados Incorretos. {error}  </div>}
+                        {alert.visible ? <Alert
+                            variant={alert.variant}
+                            dismissible
+                            onClose={() => setAlert(alertInitialState)}>
+                            {alert.message}
+                        </Alert> : '' }
                     </div>
                     <table className="table table-hover">
                         <thead>
@@ -212,7 +245,17 @@ const Developers = (props) => {
                     <Modal.Title>Developers</Modal.Title>
                 </Modal.Header>
                 <Form onSubmit={submitModalDev} className="form-developer">
-                <Modal.Body>                    
+                    <Modal.Body>
+                        <div className="mb-1">
+                            {alertModal.visible ?
+                                <Alert
+                                    variant={alertModal.variant}
+                                    dismissible
+                                    onClose={() => setAlertModal(alertInitialState)}>
+                                    {alertModal.message}
+                                </Alert> 
+                                : '' }
+                        </div>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>Nome</Form.Label>
                             <Form.Control type="text"
@@ -222,9 +265,7 @@ const Developers = (props) => {
                             <Form.Label>Sexo</Form.Label>
                             {['radio'].map((type) => (
                                 <div key={`inline-${type}`} className="genero mb-3"
-                                    /* onChange={setGender.bind(this)} */
-                                    onChange={e => setSexo(e.target.value)}
-                                >
+                                    onChange={e => setSexo(e.target.value)} >
                                     <Form.Check
                                         inline
                                         label="Masculino"
@@ -263,12 +304,12 @@ const Developers = (props) => {
                             <Form.Control type="date"
                                 value={datanascimento} onChange={e => setDatanascimento(e.target.value)}
                             />
-                        </Form.Group>                    
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="danger" onClick={cancelModalDev}><FontAwesomeIcon icon={faTimes} /> Cancelar</Button>
-                    <Button variant="success" type="submit"><FontAwesomeIcon icon={faSave} /> Salvar</Button>
-                </Modal.Footer>
+                        </Form.Group>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="danger" onClick={cancelModalDev}><FontAwesomeIcon icon={faTimes} /> Cancelar</Button>
+                        <Button variant="success" type="submit"><FontAwesomeIcon icon={faSave} /> Salvar</Button>
+                    </Modal.Footer>
                 </Form>
             </Modal>
         </div>

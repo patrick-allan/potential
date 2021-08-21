@@ -1,7 +1,7 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
 
 use App\Models\Developers;
@@ -43,9 +43,9 @@ class DevelopersController extends Controller
             if (isset($validated['idade'])) {
                 array_push($conditions, ['idade', $validated['idade']]);
             }
-            $pageLimit = 5;
+            $pageLimit = 2;
             if (isset($validated['pageLimit'])) {
-                $pageLimit = $validated['pageLimit']; 
+                $pageLimit = $validated['pageLimit'];
             }
             $result = Developers::where($conditions)->paginate($pageLimit);
             return $result;
@@ -53,14 +53,13 @@ class DevelopersController extends Controller
     }
 
     public function store(Request $request)
-    {       
+    {
         $validated = $this->validate($request, [
             'nome'           => 'required|string|max:200|regex:/^[a-zA-Z\s]*$/',
             'sexo'           => 'required|string|max:1|in:F,M,N',
             'hobby'          => 'nullable|max:200',
             'datanascimento' => 'required|date',
-        ]);     
-        
+        ]);
         try {
             $validated['idade'] = date_diff(date_create(), date_create($validated['datanascimento']))->y;
             Developers::create(array_map('trim', $validated));
