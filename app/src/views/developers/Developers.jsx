@@ -18,7 +18,7 @@ const Developers = (props) => {
     const [error, setError] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     //const [pageLimit, setPageLimit] = useState(2);
-    const pageLimit = 2;
+    const pageLimit = 5;
     const [firstPage, setFirstPage] = useState(true);
     const [lastPage, setLastPage] = useState(false);
     const [filter, setFilter] = useState('nome');
@@ -29,11 +29,22 @@ const Developers = (props) => {
     //const url = `http://localhost:8000/developers?pageLimit=${pageLimit}&page=${currentPage}&${filter}=${textFilter}`;
 
     const [urlParams, setUrlParams] = useState('');
-    const response = useFetch(urlParams);
+    //const response = useFetch(urlParams);
+    const [response, setResponse] = useState({loading:true, data:''});    
 
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    
+    useEffect(() => {
+        if (urlParams){
+            const fetchData = async () => {
+                const data = await await DevelopersService.getFiltered(urlParams);           
+                setResponse({loading: false, data: data.data});
+             }      
+             fetchData();
+        }        
+    }, [urlParams]);
 
     useEffect(function () {
         if (textFilter) {
@@ -56,7 +67,7 @@ const Developers = (props) => {
         }
     }
 
-    function showStates(states) {
+    function showStates(states) {                 
         return states.map(state =>
             <tr key={state.id}>
                 <th>{state.id}</th>
@@ -127,19 +138,15 @@ const Developers = (props) => {
         cleanModalDev();
     };
 
-    function saveModalDev() {
-        setShow(false);
-        submitModalDev();        
-    }
-
     const submitModalDev = async (e) => {
         e.preventDefault();
         try {
             const developer = await DevelopersService.include(
-                { nome: nome, sexo: sexo, hobby: hobby, datanascimento: datanascimento}
-            );            
-            console.log(developer);
+                {nome, sexo, hobby, datanascimento}
+            );
+            console.log('dev response', developer);
             cleanModalDev();
+            setShow(false);
         } catch (error) {
             setError(true);
         }
