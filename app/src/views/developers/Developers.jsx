@@ -22,9 +22,10 @@ const responseInitialState = {
 
 const Developers = (props) => {
     /*propiedades do developer*/
-    const [nome, setNome] = useState('');
-    const [sexo, setSexo] = useState('N');
-    const [hobby, setHobby] = useState('');
+    const [id, setId]                         = useState('');
+    const [nome, setNome]                     = useState('');
+    const [sexo, setSexo]                     = useState('');
+    const [hobby, setHobby]                   = useState('');
     const [datanascimento, setDatanascimento] = useState('');
     
     /*alerts*/
@@ -69,7 +70,9 @@ const Developers = (props) => {
 
     /*manipula os filtros conforme necessário*/
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        if (e){
+            e.preventDefault();
+        }        
         try {
             if (textFilter) {
                 setUrlParams(url + `pageLimit=${pageLimit}&${filter}=${textFilter}`);
@@ -124,8 +127,7 @@ const Developers = (props) => {
         setFilter(e.target.value);
     };
 
-    const crudOperation = useCallback(function (operation, id) {
-        console.log('crudOperation');
+    const crudOperation = useCallback(function (operation, id) {        
         switch (operation) {
             case 'edit': editDeveloper(id); break;
             case 'del': deleteDeveloper(id); break;
@@ -134,7 +136,16 @@ const Developers = (props) => {
     }, []);
 
     async function editDeveloper(id) {
-        console.log('editDeveloper: ' + id);
+        const fetchData = async () => {
+            const data = await await DevelopersService.getOne(id);
+            setId(data.data.id);
+            setNome(data.data.nome);
+            setSexo(data.data.sexo);
+            setHobby(data.data.hobby? data.data.hobby : '');
+            setDatanascimento(data.data.datanascimento);
+            setShow(true);
+        }
+        fetchData();
     }
 
     async function deleteDeveloper(id) {
@@ -143,19 +154,20 @@ const Developers = (props) => {
             visible: true, 
             message: 'Developers excluido com sucesso.',
             variant: 'success',
-        });
-        setUrlParams(urlParams);
+        });        
+        handleSubmit();
     }
 
-    /* Alerts auto dimiss*/
+    /* Alert auto dimiss*/
     useEffect(function () {
         window.setTimeout(()=>{
             setAlert(alertInitialState);
-        }, 5000)
+        }, 10000)
     }, [alert]);
 
     /*[INICIO] modal handling*/
     function cleanModalDev() {
+        setId('')
         setNome('');
         setSexo('');
         setHobby('');
@@ -170,14 +182,23 @@ const Developers = (props) => {
     const submitModalDev = async (e) => {
         e.preventDefault();
         try {
-            const developer = await DevelopersService.include(
-                { nome, sexo, hobby, datanascimento }
-            );            
+            let developer = false;
+            if (id){
+                console.log('update');
+                developer = await DevelopersService.update(
+                    { id, nome, sexo, hobby, datanascimento }
+                );
+            }else{
+                console.log('post');
+                developer = await DevelopersService.include(
+                    { nome, sexo, hobby, datanascimento }
+                );            
+            }
             if (developer.type === 'success') {
                 cleanModalDev();
                 setShow(false);                
-                setAlert({visible: true, message: developer.message, variant: 'success'});
-                setUrlParams(urlParams);
+                setAlert({visible: true, message: developer.message, variant: 'success'});                
+                handleSubmit();
             } else {                
                 setAlertModal({visible: true, message: manipulaErro(developer.message), variant: 'danger'});
             }
@@ -278,7 +299,7 @@ const Developers = (props) => {
                             <Form.Label>Sexo</Form.Label>
                             {['radio'].map((type) => (
                                 <div key={`inline-${type}`} className="genero mb-3"
-                                    onChange={e => setSexo(e.target.value)} >
+                                    onChange={e => setSexo(e.target.value)} value={sexo}>
                                     <Form.Check
                                         inline
                                         label="Masculino"
