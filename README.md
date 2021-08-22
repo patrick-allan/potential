@@ -31,6 +31,9 @@ $ git clone https://github.com/patrick-allan/potential.git
 $ cd potential/api
 $ composer install
 ```
+##### Requisito
+ - Banco de dados MySQL
+
 #### Configure as variáveis de ambiente
 - Crie o arquivo `.env`
 ```
@@ -42,6 +45,10 @@ $ cat .env.example > .env
 ```
 $ php artisan migrate --seed
 ```
+- Inicie o back-end:
+```
+ php -S localhost:8000 -t public
+```
 
 ### Front-end | REACT
 
@@ -49,4 +56,8 @@ $ php artisan migrate --seed
 ```
 $ cd potential/api
 $ npm install
+```
+- Inicie o front-end:
+```
+$ npm start
 ```
