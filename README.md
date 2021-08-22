@@ -73,3 +73,8 @@ $ cat .env.example > .env
 ```
 $ docker-compose build && docker-compose up -d
 ```
+- Após todas as imagens iniciarem, execute o migrate para criar a tabela developers
+
+```
+docker-compose exec api php artisan migrate
+```
