@@ -61,3 +61,6 @@ $ npm install
 ```
 $ npm start
 ```
+
+### Docker - apenas desenvolvimento
+docker-compose build && docker-compose up -d
