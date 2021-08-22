@@ -63,4 +63,13 @@ $ npm start
 ```
 
 ### Docker - apenas desenvolvimento
-docker-compose build && docker-compose up -d
+- Crie o arquivo `.env`
+```
+$ cat .env.example > .env
+```
+- Configure todas as variáveis no arquivo `.env`.
+
+- Compile e execute a imagem
+```
+$ docker-compose build && docker-compose up -d
+```
