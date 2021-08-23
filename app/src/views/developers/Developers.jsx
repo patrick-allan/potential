@@ -46,7 +46,7 @@ const Developers = (props) => {
     /*modal handling*/
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    //const handleShow = () => setShow(true);
 
     /*realiza a pesquisa de developers*/
     useEffect(() => {
@@ -166,6 +166,11 @@ const Developers = (props) => {
     }, [alert]);
 
     /*[INICIO] modal handling*/
+    function handleShow(){
+        cleanModalDev();
+        setShow(true);
+    }
+
     function cleanModalDev() {
         setId('')
         setNome('');
@@ -183,13 +188,11 @@ const Developers = (props) => {
         e.preventDefault();
         try {
             let developer = false;
-            if (id){
-                console.log('update');
+            if (id){                
                 developer = await DevelopersService.update(
                     { id, nome, sexo, hobby, datanascimento }
                 );
-            }else{
-                console.log('post');
+            }else{                
                 developer = await DevelopersService.include(
                     { nome, sexo, hobby, datanascimento }
                 );            
@@ -208,6 +211,7 @@ const Developers = (props) => {
     }
     /*[FIM] modal handling*/
 
+    /*Converte erros da api para Lista*/
     function manipulaErro(erros){
         return erros.map(state =>                
             <li key={state}>{state}</li>                
@@ -276,7 +280,7 @@ const Developers = (props) => {
                 backdrop="static"
                 keyboard={false}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Developers</Modal.Title>
+                    <Modal.Title>{id?'Editando':'Cadastrando'} Developer</Modal.Title>
                 </Modal.Header>
                 <Form onSubmit={submitModalDev} className="form-developer">
                     <Modal.Body>
@@ -299,30 +303,36 @@ const Developers = (props) => {
                             <Form.Label>Sexo</Form.Label>
                             {['radio'].map((type) => (
                                 <div key={`inline-${type}`} className="genero mb-3"
-                                    onChange={e => setSexo(e.target.value)} value={sexo}>
+                                    defaultChecked={sexo}>
                                     <Form.Check
                                         inline
                                         label="Masculino"
-                                        name="group1"
+                                        name="gender-group"
                                         type={type}
                                         id={`inline-${type}-1`}
                                         value="M"
+                                        checked={sexo==='M'}
+                                        onChange={e => setSexo(e.target.value)} 
                                     />
                                     <Form.Check
                                         inline
                                         label="Feminino"
-                                        name="group1"
+                                        name="gender-group"
                                         type={type}
                                         id={`inline-${type}-2`}
                                         value="F"
+                                        checked={sexo==='F'}
+                                        onChange={e => setSexo(e.target.value)} 
                                     />
                                     <Form.Check
                                         inline
                                         label="Não Binário"
-                                        name="group1"
+                                        name="gender-group"
                                         type={type}
                                         id={`inline-${type}-3`}
                                         value="N"
+                                        checked={sexo==='N'}
+                                        onChange={e => setSexo(e.target.value)} 
                                     />
                                 </div>
                             ))}

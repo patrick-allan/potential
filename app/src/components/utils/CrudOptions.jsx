@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faInfo, faTrashAlt, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { Modal, Button } from 'react-bootstrap';
-
 import CrudService from '../../services/crudService';
-
 import './CrudOptions.css';
 
 const CrudOptions = (props) => {
@@ -28,10 +26,19 @@ const CrudOptions = (props) => {
         return informacoes.map(state =>
             <tr key={state.key}>
                 <td>{state.key}</td>
-                <td>{state.value}</td>
+                <td>{state.key==='sexo'? genderDescription(state.value) : state.value}</td>
             </tr>
         );
     };
+
+    function genderDescription(gender){
+        switch (gender){
+            case 'M': return 'Masculino';
+            case 'F': return 'Feminino';
+            case 'N': return 'Não Binário';
+            default: return 'N/D';
+        }
+    }
 
     const loadInfo = async (e) => {                
         try {
