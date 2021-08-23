@@ -8,7 +8,6 @@ PotentialApp foi desenvolvido para atender os requisitos apresentados na prova d
 - [Lumen](https://lumen.laravel.com/)
 - [REACT](https://pt-br.reactjs.org/)
 - [MySQL](https://www.mysql.com/)
-- [NGINX](https://www.nginx.com/)
 - [Docker](https://www.docker.com/)
 
 ## Instalação
@@ -62,12 +61,12 @@ $ npm install
 $ npm start
 ```
 
-### Docker - apenas desenvolvimento
-- Crie o arquivo `.env`
+### Docker - apenas modo desenvolvimento [não usar em produção]
+- Crie o arquivo `.env` na pasta raiz do projeto e configure
 ```
 $ cat .env.example > .env
 ```
-- Configure todas as variáveis no arquivo `.env`.
+- Configure todas as variáveis do arquivo `.env` do Brack-end e Front-End
 
 - Compile e execute a imagem
 ```
