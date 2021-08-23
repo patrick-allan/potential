@@ -7,8 +7,7 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install mysqli pdo pdo_mysql
-
-# Set working directory
+    # Set working directory
 WORKDIR /var/www/api
 
 # Clear cache
@@ -33,4 +32,3 @@ USER www
 # Expose port 8000 and start php-fpm server
 EXPOSE 8000
 CMD php artisan serve --host=0.0.0.0 --port=8000
-#CMD ["php-fpm"]
